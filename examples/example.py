@@ -139,6 +139,4 @@ def spec():
     return results
 
 if __name__ == "__main__":
-    results = swagger(app)
-    print(results)
-    # app.run(debug=True)
+    app.run(debug=True)

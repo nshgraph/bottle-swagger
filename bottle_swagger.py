@@ -121,48 +121,41 @@ def swagger(app, process_doc=_sanitize):
     # technically only responses is non-optional
     optional_fields = ['tags', 'consumes', 'produces', 'schemes', 'security',
                        'deprecated', 'operationId', 'externalDocs']
-
-    for rule in app.url_map.iter_rules():
-        endpoint = app.view_functions[rule.endpoint]
-        methods = dict()
-        for verb in rule.methods.difference(ignore_verbs):
-            if hasattr(endpoint, 'methods') and verb in endpoint.methods:
-                verb = verb.lower()
-                methods[verb] = endpoint.view_class.__dict__.get(verb)
-            else:
-                methods[verb.lower()] = endpoint
+    for route in app.routes:
+        verb = route.method
+        method = route.callback
+        rule = route.rule
         operations = dict()
-        for verb, method in methods.items():
-            summary, description, swag = _parse_docstring(method, process_doc)
-            if swag is not None:  # we only add endpoints with swagger data in the docstrings
-                defs = swag.get('definitions', [])
-                defs = _extract_definitions(defs)
-                params = swag.get('parameters', [])
-                defs += _extract_definitions(params)
-                responses = swag.get('responses', {})
-                responses = {
-                    str(key): value
-                    for key, value in responses.items()
-                }
-                if responses is not None:
-                    defs = defs + _extract_definitions(responses.values())
-                for definition in defs:
-                    def_id = definition.pop('id')
-                    if def_id is not None:
-                        definitions[def_id].update(definition)
-                operation = dict(
-                    summary=summary,
-                    description=description,
-                    responses=responses
-                )
-                # parameters - swagger ui dislikes empty parameter lists
-                if len(params) > 0:
-                    operation['parameters'] = params
-                # other optionals
-                for key in optional_fields:
-                    if key in swag:
-                        operation[key] = swag.get(key)
-                operations[verb] = operation
+        summary, description, swag = _parse_docstring(method, process_doc)
+        if swag is not None:  # we only add endpoints with swagger data in the docstrings
+            defs = swag.get('definitions', [])
+            defs = _extract_definitions(defs)
+            params = swag.get('parameters', [])
+            defs += _extract_definitions(params)
+            responses = swag.get('responses', {})
+            responses = {
+                str(key): value
+                for key, value in responses.items()
+            }
+            if responses is not None:
+                defs = defs + _extract_definitions(responses.values())
+            for definition in defs:
+                def_id = definition.pop('id')
+                if def_id is not None:
+                    definitions[def_id].update(definition)
+            operation = dict(
+                summary=summary,
+                description=description,
+                responses=responses
+            )
+            # parameters - swagger ui dislikes empty parameter lists
+            if len(params) > 0:
+                operation['parameters'] = params
+            # other optionals
+            for key in optional_fields:
+                if key in swag:
+                    operation[key] = swag.get(key)
+            operations[verb] = operation
 
         if len(operations):
             rule = str(rule)

@@ -6,12 +6,12 @@ except ImportError:
 with open('README') as file:
     long_description = file.read()
 
-setup(name='flask-swagger',
-      version='0.2.10',
-      url='https://github.com/gangverk/flask-swagger',
-      description='Extract swagger specs from your flask project',
-      author='Atli Thorbjornsson',
+setup(name='bottle-swagger',
+      version='0.1.0',
+      url='https://github.com/nshgraph/bottle-swagger',
+      description='Extract swagger specs from your bottle project',
+      author='Nathan Holmberg',
       license='MIT',
-      py_modules=['flask_swagger'],
+      py_modules=['bottle_swagger'],
       long_description=long_description,
-      install_requires=['Flask>=0.10', 'PyYAML>=3.0'])
+      install_requires=['bottle>=0.12.8', 'PyYAML>=3.0'])

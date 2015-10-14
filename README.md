@@ -1,11 +1,13 @@
-# flask-swagger
-A Swagger 2.0 spec extractor for Flask
+# bottle-swagger
+A Swagger 2.0 spec extractor for Bottle
+
+This is based originally of flask-swagger hosted at https://github.com/gangverk/flask-swagger
 
 Install:
 ```
-pip install flask-swagger
+pip install bottle-swagger
 ```
-Flask-swagger provides a method (swagger) that inspects the Flask app for endpoints that contain YAML docstrings with Swagger 2.0 [Operation](https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#operation-object) objects.
+Bottle-swagger provides a method (swagger) that inspects the Bottle app for endpoints that contain YAML docstrings with Swagger 2.0 [Operation](https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#operation-object) objects.
 
 ```
 class UserAPI(MethodView):
@@ -62,7 +64,7 @@ class UserAPI(MethodView):
         """
         return {}
 ```
-Flask-swagger supports docstrings in methods of MethodView classes (ala [Flask-RESTful](https://github.com/flask-restful/flask-restful)) and regular Flask view functions.
+Bottle-swagger supports docstrings in methods of MethodView classes (ala [Flask-RESTful](https://github.com/flask-restful/flask-restful)) and regular Flask view functions.
 
 Following YAML conventions, flask-swagger searches for `---`, everything preceding is provided as `summary` (first line) and `description` (following lines) for the endpoint while everything after is parsed as a swagger [Operation](https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#operation-object) object.
 
@@ -75,19 +77,19 @@ In order to support inline definition of [Schema ](https://github.com/swagger-ap
 To expose your Swagger specification to the world you provide a Flask route that does something along these lines
 
 ```
-from flask import Flask, jsonify
+from bottle import bottle, route, get
 from flask_swagger import swagger
 
 app = Flask(__name__)
 
-@app.route("/spec")
+@get("/spec")
 def spec():
-    return jsonify(swagger(app))
+    return swagger(app)
 ```
 
 Note that the Swagger specification returned by `swagger(app)` is as minimal as it can be. It's your job to override and add to the specification as you see fit.
 ```
-@app.route("/spec")
+@get("/spec")
 def spec():
     swag = swagger(app)
     swag['info']['version'] = "1.0"
@@ -96,15 +98,8 @@ def spec():
 ```
 
 
-[Swagger-UI](https://github.com/swagger-api/swagger-ui)
-
-Swagger-UI is the reason we embarked on this mission to begin with, flask-swagger does not however include Swagger-UI. Simply follow the awesome documentation over at https://github.com/swagger-api/swagger-ui and point your [swaggerUi.url](https://github.com/swagger-api/swagger-ui#swaggerui) to your new flask-swagger endpoint and enjoy.
-
-
 Acknowledgements
 
+As noted above: This is based originally of flask-swagger hosted at https://github.com/gangverk/flask-swagger. Their acknowledgments are:
 Flask-swagger builds on ideas and code from [flask-sillywalk](https://github.com/hobbeswalsh/flask-sillywalk) and [flask-restful-swagger](https://github.com/rantav/flask-restful-swagger)
 
-Notable forks
-
-[Flasgger](https://github.com/rochacbruno/flasgger)

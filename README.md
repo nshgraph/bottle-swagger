@@ -10,61 +10,22 @@ pip install bottle-swagger
 Bottle-swagger provides a method (swagger) that inspects the Bottle app for endpoints that contain YAML docstrings with Swagger 2.0 [Operation](https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#operation-object) objects.
 
 ```
-class UserAPI(MethodView):
-
-    def post(self):
-        """
-        Create a new user
-        ---
-        tags:
-          - users
-        definitions:
-          - schema:
-              id: Group
-              properties:
-                name:
-                 type: string
-                 description: the group's name
-        parameters:
-          - in: body
-            name: body
-            schema:
-              id: User
-              required:
-                - email
-                - name
-              properties:
-                email:
-                  type: string
-                  description: email for user
-                name:
-                  type: string
-                  description: name for user
-                address:
-                  description: address for user
-                  schema:
-                    id: Address
-                    properties:
-                      street:
-                        type: string
-                      state:
-                        type: string
-                      country:
-                        type: string
-                      postalcode:
-                        type: string
-                groups:
-                  type: array
-                  description: list of groups
-                  items:
-                    $ref: "#/definitions/Group"
-        responses:
-          201:
-            description: User created
-        """
-        return {}
+@get("/userid")
+def userid_get(self, team_id):
+  """
+  Get a list of users
+  First line is the summary
+  All following lines until the hyphens is added to description
+  ---
+  tags:
+    - users
+  responses:
+    200:
+      description: Returns a list of users
+  """
+  return []
 ```
-Bottle-swagger supports docstrings in methods of MethodView classes (ala [Flask-RESTful](https://github.com/flask-restful/flask-restful)) and regular Flask view functions.
+Bottle-swagger supports the normal bottle route decorators and manually specified routes
 
 Following YAML conventions, flask-swagger searches for `---`, everything preceding is provided as `summary` (first line) and `description` (following lines) for the endpoint while everything after is parsed as a swagger [Operation](https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#operation-object) object.
 

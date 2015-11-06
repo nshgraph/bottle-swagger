@@ -9,6 +9,7 @@ we add the endpoint to swagger specification output
 import inspect
 import yaml
 import re
+import sys
 
 from collections import defaultdict
 
@@ -124,6 +125,12 @@ def swagger(app, process_doc=_sanitize):
     for route in app.routes:
         verb = route.method
         method = route.callback
+        if sys.version_info[0] < 3: # python 2.X
+            while method.func_closure and  hasattr(method.func_closure.cell_contents,'__call__'):
+                method = method.func_closure[0].cell_contents
+        else: # python 3+
+            while method.__closure__ and hasattr(method.__closure__[0].cell_contents,'__call__'):
+                method = method.__closure__[0].cell_contents
         rule = route.rule
         operations = dict()
         summary, description, swag = _parse_docstring(method, process_doc)

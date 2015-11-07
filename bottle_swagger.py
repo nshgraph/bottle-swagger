@@ -123,7 +123,7 @@ def swagger(app, process_doc=_sanitize):
     optional_fields = ['tags', 'consumes', 'produces', 'schemes', 'security',
                        'deprecated', 'operationId', 'externalDocs']
     for route in app.routes:
-        verb = route.method
+        verb = route.method.lower()
         method = route.callback
         if sys.version_info[0] < 3: # python 2.X
             while method.func_closure and  hasattr(method.func_closure.cell_contents,'__call__'):
